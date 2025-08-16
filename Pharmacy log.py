@@ -9,9 +9,11 @@ import mysql.connector
 
 # ==================== MEDICINAL STOCK MANAGEMENT SYSTEM ====================
 class MedicinalStock:
-    def __init__(self, root):
+    def __init__(self, root, main_app=None):
         self.root = root
-        self.setup_window()
+        self.main_app = main_app
+        if main_app is None:
+            self.setup_window()
         self.initialize_variables()
         self.create_main_interface()
     
@@ -68,6 +70,9 @@ class MedicinalStock:
     # ==================== TITLE SECTION ====================
     def create_title_section(self):
         """Create main title header"""
+        if self.main_app:
+            Button(self.root, text="← Back to Main Menu", font=("Arial", 12, "bold"), bg="blue", fg="white", command=self.main_app.show_main_menu).pack(anchor="nw", padx=10, pady=5)
+        
         Label(self.root,
               bd=20, relief=RIDGE,
               text="MEDICINAL STOCK MANAGEMENT SYSTEM",
@@ -206,7 +211,8 @@ class MedicinalStock:
         Button(self.buttonframe, text="Update", font=("arial", 12, "bold"), height=1, bg="Green", fg="white").grid(row=0, column=2, sticky='ew')
         Button(self.buttonframe, text="Delete", font=("arial", 12, "bold"), height=1, bg="Green", fg="white").grid(row=0, column=3, sticky='ew')
         Button(self.buttonframe, text="Clear", font=("arial", 12, "bold"), height=1, bg="Green", fg="white", command=self.clear_fields).grid(row=0, column=4, sticky='ew')
-        Button(self.buttonframe, text="Exit", font=("arial", 12, "bold"), height=1, bg="Green", fg="white", command=self.root.quit).grid(row=0, column=5, sticky='ew')
+        exit_command = self.main_app.show_main_menu if self.main_app else self.root.quit
+        Button(self.buttonframe, text="Exit", font=("arial", 12, "bold"), height=1, bg="Green", fg="white", command=exit_command).grid(row=0, column=5, sticky='ew')
     
     # ==================== DATA TABLE CREATION ====================
     def create_data_table(self):

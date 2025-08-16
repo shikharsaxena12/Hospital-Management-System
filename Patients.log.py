@@ -10,13 +10,15 @@ import mysql.connector
 # Define the main Patients class that contains all functionality
 class Patients:
     # Constructor method that runs when Patients object is created
-    def __init__(self, root):
+    def __init__(self, root, main_app=None):
         # Store the root window reference in self.root
         self.root = root
+        self.main_app = main_app
         # Set the window title that appears in title bar
-        self.root.title("Patient Management System")
-        # Set window size (width=1540, height=800) and position (x=0, y=0)
-        self.root.geometry("1540x800+0+0")
+        if main_app is None:
+            self.root.title("Patient Management System")
+            # Set window size (width=1540, height=800) and position (x=0, y=0)
+            self.root.geometry("1540x800+0+0")
         
         # Create StringVar objects to store form data - these link GUI to variables
         self.PatientId=StringVar()        # Stores patient ID number
@@ -41,6 +43,10 @@ class Patients:
         self.Frequency=StringVar()        # Stores how often to take medicine
         self.Duration=StringVar()         # Stores treatment duration
 
+        # Add back button if integrated
+        if self.main_app:
+            Button(self.root, text="← Back to Main Menu", font=("Arial", 12, "bold"), bg="blue", fg="white", command=self.main_app.show_main_menu).pack(anchor="nw", padx=10, pady=5)
+        
         # Create main title label with styling and pack it at top
         Label(self.root,                           # Parent container is root window
               bd=20,                               # Border width of 20 pixels
@@ -253,8 +259,9 @@ class Patients:
                ).grid(row=0, column=4, sticky='ew')
         
         # Create Exit button that closes application
+        exit_command = self.main_app.show_main_menu if self.main_app else root.quit
         Button(buttonframe, text="Exit", font=("arial", 12, "bold"), height=1, bg="Green", fg="white", 
-               command=root.quit             # Built-in function to quit application
+               command=exit_command          # Function to quit or return to main menu
                ).grid(row=0, column=5, sticky='ew')
 
         # Create horizontal scrollbar for table
@@ -433,9 +440,11 @@ class Patients:
         # Clear prescription text area from first character to end
         self.txtprescription.delete(1.0, END)
 
-# Create main tkinter window
-root=Tk()
-# Create Patients object with root window as parameter
-Patients(root)
-# Start the GUI event loop (keeps window open and responsive)
-root.mainloop()
+# Only run as standalone if this file is executed directly
+if __name__ == "__main__":
+    # Create main tkinter window
+    root=Tk()
+    # Create Patients object with root window as parameter
+    Patients(root)
+    # Start the GUI event loop (keeps window open and responsive)
+    root.mainloop()
